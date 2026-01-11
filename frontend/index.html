@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Waste Management Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-main">
+        <h1>Smart Waste Management System</h1>
+        <button class="header-cta">SWMS Demo</button>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-section="dashboard-section">
+          Dashboard
+        </button>
+        <button class="nav-tab" data-section="bins-section">
+          Bins & Relationships
+        </button>
+        <button class="nav-tab" data-section="routes-section">
+          Routes & Pickups
+        </button>
+        <button class="nav-tab" data-section="complaints-section">
+          Complaints & Tickets
+        </button>
+        <button class="nav-tab" data-section="explorer-section">
+          Data Explorer
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- DASHBOARD -->
+      <section id="dashboard-section" class="page-section active">
+        <div class="cards-grid">
+          <div class="card">
+            <h3>Total Bins</h3>
+            <p class="metric" id="metric-total-bins">-</p>
+          </div>
+          <div class="card">
+            <h3>Active Bins</h3>
+            <p class="metric" id="metric-active-bins">-</p>
+          </div>
+          <div class="card">
+            <h3>Open Complaints</h3>
+            <p class="metric" id="metric-open-complaints">-</p>
+          </div>
+          <div class="card">
+            <h3>Open Maintenance Tickets</h3>
+            <p class="metric" id="metric-open-tickets">-</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h2>Recent Pickups</h2>
+            <div id="dashboard-pickups">Loading...</div>
+          </div>
+          <div class="panel">
+            <h2>Recent Complaints</h2>
+            <div id="dashboard-complaints">Loading...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Pickups per Route (last 7 days)</h2>
+          <p class="muted">Shows how many pickups each route completed in the past week (counts from route_pickups).</p>
+          <canvas id="route-chart" height="120"></canvas>
+        </div>
+      </section>
+
+      <!-- BINS & RELATIONSHIPS -->
+      <section id="bins-section" class="page-section">
+        <div class="section-header">
+          <h2>Bins & Relationships</h2>
+          <p>
+            Explore how bins connect to zones, pickups, complaints, maintenance
+            tickets, and sensor devices.
+          </p>
+        </div>
+
+        <div class="filters-row">
+          <label>
+            Zone
+            <select id="bins-zone-filter"></select>
+          </label>
+          <label>
+            Type
+            <select id="bins-type-filter">
+              <option value="all">All</option>
+              <option value="GENERAL">General</option>
+              <option value="RECYCLING">Recycling</option>
+              <option value="ORGANIC">Organic</option>
+              <option value="E-WASTE">E-Waste</option>
+            </select>
+          </label>
+          <button id="bins-refresh" class="secondary">Refresh</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Bins</h3>
+            <div id="bins-list">Loading...</div>
+          </div>
+          <div class="panel">
+            <h3>Selected Bin Details</h3>
+            <div id="bin-details">
+              <p>Select a bin to view relationships.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Create Complaint</h3>
+          <p class="muted">Quickly log a new complaint for the selected bin (or choose any bin).</p>
+          <form id="complaint-form" class="form-grid">
+            <label>
+              Bin
+              <select id="complaint-bin"></select>
+            </label>
+            <label>
+              Type
+              <select id="complaint-type">
+                <option value="OVERFLOW">OVERFLOW</option>
+                <option value="MISSED_PICKUP">MISSED_PICKUP</option>
+                <option value="ODOR">ODOR</option>
+                <option value="DAMAGED_BIN">DAMAGED_BIN</option>
+                <option value="OTHER">OTHER</option>
+              </select>
+            </label>
+            <label>
+              Description
+              <textarea id="complaint-desc" rows="2" placeholder="What happened?"></textarea>
+            </label>
+            <label>
+              User ID
+              <input id="complaint-user" type="number" min="1" placeholder="e.g., 1" />
+            </label>
+            <button type="submit">Submit Complaint</button>
+            <div id="complaint-status" class="form-status"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ROUTES & PICKUPS -->
+      <section id="routes-section" class="page-section">
+        <div class="section-header">
+          <h2>Routes & Pickups</h2>
+          <p>View collection routes and their scheduled/actual pickups.</p>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Routes</h3>
+            <div class="routes-quick-buttons">
+              <button class="secondary" id="route1-btn">
+                Route 1 - Downtown
+              </button>
+              <button class="secondary" id="route2-btn">
+                Route 2 - Campus
+              </button>
+            </div>
+            <div id="routes-list">Loading...</div>
+          </div>
+          <div class="panel">
+            <h3>Pickups for Selected Route</h3>
+            <div id="route-pickups-list">
+              <p>Select a route to view pickups.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPLAINTS & TICKETS -->
+      <section id="complaints-section" class="page-section">
+        <div class="section-header">
+          <h2>Complaints & Maintenance Tickets</h2>
+          <p>Monitor citizen complaints and technical maintenance tasks.</p>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Recent Complaints</h3>
+            <div id="complaints-list">Loading...</div>
+          </div>
+          <div class="panel">
+            <h3>Recent Maintenance Tickets</h3>
+            <div id="tickets-list">Loading...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Create Maintenance Ticket</h3>
+          <p class="muted">Assign a maintenance task against a bin.</p>
+          <form id="ticket-form" class="form-grid">
+            <label>
+              Bin
+              <select id="ticket-bin"></select>
+            </label>
+            <label>
+              Status
+              <select id="ticket-status">
+                <option value="OPEN">OPEN</option>
+                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                <option value="RESOLVED">RESOLVED</option>
+              </select>
+            </label>
+            <label>
+              Issue Description
+              <textarea id="ticket-desc" rows="2" placeholder="Describe the maintenance issue"></textarea>
+            </label>
+            <label>
+              Created By (user_id)
+              <input id="ticket-created" type="number" min="1" placeholder="e.g., 1" />
+            </label>
+            <label>
+              Assigned To (user_id)
+              <input id="ticket-assigned" type="number" min="1" placeholder="optional" />
+            </label>
+            <button type="submit">Create Ticket</button>
+            <div id="ticket-status-msg" class="form-status"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- DATA EXPLORER (GENERIC TABLE VIEWER) -->
+      <section id="explorer-section" class="page-section">
+        <div class="section-header">
+          <h2>Data Explorer</h2>
+          <p>
+            Inspect raw tables from your database (useful for debugging/API
+            design).
+          </p>
+        </div>
+        <section class="controls">
+          <label for="table-select">Select table:</label>
+          <select id="table-select">
+            <option value="bins">bins</option>
+            <option value="zones">zones</option>
+            <option value="routes">routes</option>
+            <option value="route_pickups">route_pickups</option>
+            <option value="maint_tickets">maint_tickets</option>
+            <option value="complaints">complaints</option>
+            <option value="sensor_readings">sensor_readings</option>
+            <option value="devices">devices</option>
+            <option value="trucks">trucks</option>
+            <option value="users">users</option>
+            <option value="vendors">vendors</option>
+            <option value="audit_logs">audit_logs</option>
+          </select>
+          <button id="load-btn">Load Data</button>
+        </section>
+
+        <section class="output">
+          <h2 id="output-title">Table data</h2>
+          <div id="table-container"></div>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-card footer-grid">
+        <div class="footer-block">
+          <p class="footer-title">Smart Waste Management System</p>
+          <p class="footer-line"><span class="footer-label">Scope:</span> University of Lahore campus + downtown city zone.</p>
+            <p class="footer-line"><span class="footer-label">Technologies:</span> Supabase, Chart.js, Vanilla JS, HTML, CSS.</p>
+         
+        </div>
+        <div class="footer-block">
+          <p class="footer-title">Data & API</p>
+          <p class="footer-line">Supabase PostgreSQL · REST/JS client</p>
+          <p class="footer-line">Tables: bins, routes, pickups, complaints, tickets, sensors</p>
+          <p class="footer-line">Live chart + create forms for complaints and tickets</p>
+        </div>
+        <div class="footer-block">
+          <p class="footer-title">Contacts</p>
+          <p class="footer-line"><span class="footer-dot">•</span> <a href="mailto:wasif@gmail.com">wasif@gmail.com</a></p>
+          <p class="footer-line"><span class="footer-dot">•</span> <a href="mailto:faaiz@gmail.com">faaiz@gmail.com</a></p>
+          <p class="footer-line"><span class="footer-dot">•</span> <a href="mailto:mahnoor@gmail.com">mahnoor@gmail.com</a></p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
