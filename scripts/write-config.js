@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const outPath = path.join(__dirname, '..', 'frontend', 'config.js');
+const outPath = path.join(process.cwd(), 'config.js');
 const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
