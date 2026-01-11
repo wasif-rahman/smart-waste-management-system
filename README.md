@@ -36,7 +36,7 @@ A web-based dashboard for managing and monitoring waste collection operations, i
 **Frontend**
 - HTML5
 - CSS3
-- Vanilla JavaScript
+- Vanilla JavaScript.
 - Chart.js
 
 **Backend**
@@ -65,3 +65,4 @@ Create a `.env` file and add:
 ```env
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
+
