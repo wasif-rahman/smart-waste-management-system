@@ -2,6 +2,11 @@
 
 A web-based dashboard for managing and monitoring waste collection operations, including bins, routes, pickups, and complaints — built with **Vanilla JavaScript**, **HTML**, and **CSS**, powered by **Supabase** and deployed on **Vercel**.
 
+##  Live Demo
+🔗 https://smart-waste-management-system1.vercel.app/
+
+---
+
 ##  Features
 
 - 📊 **Dashboard Overview**
