@@ -1,15 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
-// This will help us see what Vercel is actually passing in the logs
-console.log('--- DEBUG INFO ---');
-console.log('Available Env Vars:', Object.keys(process.env).filter(key => key.includes('SUPABASE')));
+// This version won't crash your build
+const url = process.env.SUPABASE_URL || 'UNDEFINED_URL';
+const key = process.env.SUPABASE_ANON_KEY || 'UNDEFINED_KEY';
 
-const url = process.env.SUPABASE_URL || 'MISSING_URL';
-const key = process.env.SUPABASE_ANON_KEY || 'MISSING_KEY';
+if (url === 'UNDEFINED_URL') {
+    console.warn('WARNING: SUPABASE_URL is missing from Vercel Settings');
+}
 
 const outPath = path.join(process.cwd(), 'config.js');
 const content = `const SUPABASE_URL = '${url}';\nconst SUPABASE_ANON_KEY = '${key}';\n`;
 
 fs.writeFileSync(outPath, content, { encoding: 'utf8' });
-console.log('Wrote config.js to:', outPath);
+console.log('Build finished. config.js created.');
